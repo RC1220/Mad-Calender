@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Incident Tracker</title>
+  <title>Shared Day Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -15,9 +15,9 @@
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --primary: #6366f1;
-      --danger: #ff4757;
-      --danger-glow: rgba(255, 71, 87, 0.4);
-      --accent-glow: rgba(99, 102, 241, 0.25);
+      --red: #ff4757;
+      --yellow: #ffa502;
+      --green: #2ed573;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,25 +36,24 @@
 
     .app-card {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 28px;
       padding: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 60px var(--accent-glow);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .header h1 {
       font-size: 1.25rem;
       font-weight: 800;
-      letter-spacing: -0.02em;
       background: linear-gradient(135deg, #fff 40%, #a5b4fc 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -85,11 +84,63 @@
       box-shadow: 0 0 10px #10b981;
     }
 
+    /* Color Selection Buttons */
+    .color-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .color-btn {
+      flex: 1;
+      padding: 10px 0;
+      border-radius: 14px;
+      border: 2px solid transparent;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .color-btn .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .color-btn[data-color="red"] .dot { background: var(--red); }
+    .color-btn[data-color="yellow"] .dot { background: var(--yellow); }
+    .color-btn[data-color="green"] .dot { background: var(--green); }
+
+    .color-btn.active[data-color="red"] {
+      border-color: var(--red);
+      background: rgba(255, 71, 87, 0.15);
+      color: #fff;
+    }
+
+    .color-btn.active[data-color="yellow"] {
+      border-color: var(--yellow);
+      background: rgba(255, 165, 2, 0.15);
+      color: #fff;
+    }
+
+    .color-btn.active[data-color="green"] {
+      border-color: var(--green);
+      background: rgba(46, 213, 115, 0.15);
+      color: #fff;
+    }
+
     .nav-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .nav-bar h2 {
@@ -109,27 +160,19 @@
       justify-content: center;
       cursor: pointer;
       font-weight: 800;
-      transition: all 0.2s ease;
-    }
-
-    .nav-btn:active {
-      transform: scale(0.9);
-      background: rgba(255, 255, 255, 0.12);
     }
 
     .weekdays {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .weekdays div {
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     .days-grid {
@@ -151,62 +194,82 @@
       border: 1px solid transparent;
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
     }
 
-    .day-cell:not(.empty):active {
-      transform: scale(0.85);
-    }
+    .day-cell.empty { background: transparent; cursor: default; }
+    .day-cell.today { border-color: var(--primary); color: #a5b4fc; }
 
-    .day-cell.empty {
-      background: transparent;
-      cursor: default;
-    }
-
-    .day-cell.today {
-      border-color: var(--primary);
-      color: #a5b4fc;
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-
-    .day-cell.mad {
+    .day-cell.red {
       background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
       color: #fff;
       font-weight: 800;
-      box-shadow: 0 6px 16px var(--danger-glow);
-      animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
     }
 
-    @keyframes popIn {
-      0% { transform: scale(0.8); }
-      100% { transform: scale(1); }
+    .day-cell.yellow {
+      background: linear-gradient(135deg, #ffa502 0%, #eccc68 100%);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(255, 165, 2, 0.3);
     }
 
+    .day-cell.green {
+      background: linear-gradient(135deg, #2ed573 0%, #2bcbba 100%);
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
+    }
+
+    /* Bottom Stats Section */
     .stats-card {
-      margin-top: 20px;
+      margin-top: 24px;
       padding: 16px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
+      border-radius: 18px;
       display: flex;
-      justify-content: space-around;
-      text-align: center;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .stat-num {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--danger);
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .stat-label {
-      font-size: 0.68rem;
-      color: var(--text-muted);
+    .stat-row:first-child {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 10px;
+    }
+
+    .stat-title {
+      font-size: 0.8rem;
       font-weight: 700;
-      margin-top: 2px;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
+    .stat-pills {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill.red { background: rgba(255, 71, 87, 0.2); color: #ff6b81; }
+    .pill.yellow { background: rgba(255, 165, 2, 0.2); color: #ffa502; }
+    .pill.green { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
   </style>
 </head>
 <body>
@@ -218,6 +281,19 @@
         <div class="badge-dot" id="statusDot"></div>
         <span id="statusText">Syncing...</span>
       </div>
+    </div>
+
+    <!-- Active Color Selector Buttons -->
+    <div class="color-selector">
+      <button class="color-btn active" data-color="red">
+        <span class="dot"></span> Red
+      </button>
+      <button class="color-btn" data-color="yellow">
+        <span class="dot"></span> Yellow
+      </button>
+      <button class="color-btn" data-color="green">
+        <span class="dot"></span> Green
+      </button>
     </div>
 
     <div class="nav-bar">
@@ -232,10 +308,23 @@
 
     <div class="days-grid" id="daysGrid"></div>
 
+    <!-- Bottom Statistics -->
     <div class="stats-card">
-      <div>
-        <div class="stat-num" id="totalIncidents">0</div>
-        <div class="stat-label">Total Days</div>
+      <div class="stat-row">
+        <span class="stat-title">Year to Date</span>
+        <div class="stat-pills">
+          <span class="pill red" id="ytdRed">🔴 0</span>
+          <span class="pill yellow" id="ytdYellow">🟡 0</span>
+          <span class="pill green" id="ytdGreen">🟢 0</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-title">Month to Date</span>
+        <div class="stat-pills">
+          <span class="pill red" id="mtdRed">🔴 0</span>
+          <span class="pill yellow" id="mtdYellow">🟡 0</span>
+          <span class="pill green" id="mtdGreen">🟢 0</span>
+        </div>
       </div>
     </div>
   </div>
@@ -258,16 +347,30 @@
     const db = getFirestore(app);
 
     let currentDate = new Date();
-    const madDates = new Set();
+    const dayData = new Map();
+    let activeColor = 'red';
 
+    // Color Selector Switcher
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeColor = btn.dataset.color;
+      });
+    });
+
+    // Realtime Database Listener
     onSnapshot(collection(db, "mad_days"), (snapshot) => {
-      madDates.clear();
-      snapshot.forEach(doc => madDates.add(doc.id));
+      dayData.clear();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        dayData.set(doc.id, data.color || 'red');
+      });
       
       document.getElementById('statusText').innerText = "Live";
       document.getElementById('statusDot').classList.add('active');
-      document.getElementById('totalIncidents').innerText = madDates.size;
       
+      updateStats();
       renderCalendar();
     }, (error) => {
       document.getElementById('statusText').innerText = "Offline";
@@ -277,11 +380,41 @@
 
     async function toggleDate(dateStr) {
       const docRef = doc(db, "mad_days", dateStr);
-      if (madDates.has(dateStr)) {
+      const currentColor = dayData.get(dateStr);
+
+      if (currentColor === activeColor) {
         await deleteDoc(docRef);
       } else {
-        await setDoc(docRef, { date: dateStr, loggedAt: new Date() });
+        await setDoc(docRef, { date: dateStr, color: activeColor, loggedAt: new Date() });
       }
+    }
+
+    function updateStats() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+      const todayStr = `${currentYear}-${currentMonth}-${String(now.getDate()).padStart(2, '0')}`;
+
+      let ytd = { red: 0, yellow: 0, green: 0 };
+      let mtd = { red: 0, yellow: 0, green: 0 };
+
+      dayData.forEach((color, dateStr) => {
+        const [y, m] = dateStr.split('-');
+        if (parseInt(y) === currentYear && dateStr <= todayStr) {
+          if (ytd[color] !== undefined) ytd[color]++;
+          if (m === currentMonth) {
+            if (mtd[color] !== undefined) mtd[color]++;
+          }
+        }
+      });
+
+      document.getElementById('ytdRed').innerText = `🔴 ${ytd.red}`;
+      document.getElementById('ytdYellow').innerText = `🟡 ${ytd.yellow}`;
+      document.getElementById('ytdGreen').innerText = `🟢 ${ytd.green}`;
+
+      document.getElementById('mtdRed').innerText = `🔴 ${mtd.red}`;
+      document.getElementById('mtdYellow').innerText = `🟡 ${mtd.yellow}`;
+      document.getElementById('mtdGreen').innerText = `🟢 ${mtd.green}`;
     }
 
     function renderCalendar() {
@@ -316,7 +449,9 @@
         dayDiv.innerText = day;
 
         if (dateStr === todayStr) dayDiv.classList.add('today');
-        if (madDates.has(dateStr)) dayDiv.classList.add('mad');
+
+        const color = dayData.get(dateStr);
+        if (color) dayDiv.classList.add(color);
 
         dayDiv.addEventListener('click', () => toggleDate(dateStr));
         daysGrid.appendChild(dayDiv);
