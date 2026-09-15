@@ -94,14 +94,14 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // 🔴 REPLACE THE OBJECT BELOW WITH YOUR FIREBASE CONFIG FROM STEP 1
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyAe5auugKdM0dftt2itYKmar35zN0c9_As",
+      authDomain: "calendar-9c187.firebaseapp.com",
+      projectId: "calendar-9c187",
+      storageBucket: "calendar-9c187.firebasestorage.app",
+      messagingSenderId: "503457410166",
+      appId: "1:503457410166:web:f5360d583a7d139499c357",
+      measurementId: "G-XQQD4P5G9N"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -110,7 +110,7 @@
     let currentDate = new Date();
     const madDates = new Set();
 
-    // Live Sync Listener (Updates everywhere when anyone clicks a day)
+    // Live Sync Listener
     onSnapshot(collection(db, "mad_days"), (snapshot) => {
       madDates.clear();
       snapshot.forEach(doc => {
@@ -187,4 +187,3 @@
   </script>
 </body>
 </html>
-
