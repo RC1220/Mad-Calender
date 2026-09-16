@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Shared Day Tracker</title>
+  
+  <!-- Apple & Android Web App Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Day Tracker">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -84,7 +90,6 @@
       box-shadow: 0 0 10px #10b981;
     }
 
-    /* Color Selection Buttons */
     .color-selector {
       display: flex;
       gap: 10px;
@@ -221,7 +226,6 @@
       box-shadow: 0 4px 12px rgba(46, 213, 115, 0.3);
     }
 
-    /* Bottom Stats Section */
     .stats-card {
       margin-top: 24px;
       padding: 16px;
@@ -283,7 +287,6 @@
       </div>
     </div>
 
-    <!-- Active Color Selector Buttons -->
     <div class="color-selector">
       <button class="color-btn active" data-color="red">
         <span class="dot"></span> Mad
@@ -308,7 +311,6 @@
 
     <div class="days-grid" id="daysGrid"></div>
 
-    <!-- Bottom Statistics -->
     <div class="stats-card">
       <div class="stat-row">
         <span class="stat-title">Year to Date</span>
@@ -333,6 +335,68 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+    // Dynamic App Icon Generator
+    (function createDynamicAppIcon() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 180;
+      canvas.height = 180;
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = '#0b0f19';
+      ctx.fillRect(0, 0, 180, 180);
+
+      // Card frame
+      ctx.fillStyle = '#151c2c';
+      ctx.beginPath();
+      ctx.roundRect(16, 16, 148, 148, 32);
+      ctx.fill();
+
+      // Top Header bar
+      ctx.fillStyle = '#6366f1';
+      ctx.beginPath();
+      ctx.roundRect(32, 32, 116, 12, 6);
+      ctx.fill();
+
+      // Status Dots: Red, Yellow, Green
+      ctx.fillStyle = '#ff4757';
+      ctx.beginPath(); ctx.arc(52, 75, 14, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#ffa502';
+      ctx.beginPath(); ctx.arc(90, 75, 14, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#2ed573';
+      ctx.beginPath(); ctx.arc(128, 75, 14, 0, Math.PI * 2); ctx.fill();
+
+      // Grid squares
+      const drawSquare = (x, y, color) => {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.roundRect(x, y, 22, 22, 6);
+        ctx.fill();
+      };
+
+      drawSquare(40, 105, 'rgba(255, 255, 255, 0.1)');
+      drawSquare(79, 105, '#ff4757');
+      drawSquare(118, 105, 'rgba(255, 255, 255, 0.1)');
+
+      drawSquare(40, 133, '#ffa502');
+      drawSquare(79, 133, '#2ed573');
+      drawSquare(118, 133, 'rgba(255, 255, 255, 0.1)');
+
+      const iconUrl = canvas.toDataURL('image/png');
+
+      const appleIcon = document.createElement('link');
+      appleIcon.rel = 'apple-touch-icon';
+      appleIcon.href = iconUrl;
+      document.head.appendChild(appleIcon);
+
+      const favIcon = document.createElement('link');
+      favIcon.rel = 'icon';
+      favIcon.href = iconUrl;
+      document.head.appendChild(favIcon);
+    })();
+
     const firebaseConfig = {
       apiKey: "AIzaSyAe5auugKdM0dftt2itYKmar35zN0c9_As",
       authDomain: "calendar-9c187.firebaseapp.com",
@@ -350,7 +414,6 @@
     const dayData = new Map();
     let activeColor = 'red';
 
-    // Color Selector Switcher
     document.querySelectorAll('.color-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
@@ -359,7 +422,6 @@
       });
     });
 
-    // Realtime Database Listener
     onSnapshot(collection(db, "mad_days"), (snapshot) => {
       dayData.clear();
       snapshot.forEach(doc => {
